@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rahman LOD project</title>
+    <script src="https://cdn.jsdelivr.net/npm/gl-matrix@3.4.3/gl-matrix-min.min.js" ></script>
+    <script src="shapes.js"></script>
+    <script src="main.js" ></script>
+
+    <script type="text/javascript">
+        // Call init once the webpage has loaded
+        window.onload = init;
+    </script>
+
+    <script type="text/javascript">
+
+        vertexData = [];
+        function gotKey (event) {
+            var key = event.key;
+
+            switch (key) {
+                case 'w':
+                    cameraPosition[2] += 0.1; // move forward
+                    break;
+                case 's':
+                    cameraPosition[2] -= 0.1; // move backward
+                    break;
+                case 'd':
+                    cameraPosition[0] -= 0.1; // move left
+                    break;
+                case 'a':
+                    cameraPosition[0] += 0.1; // move right
+                    break;
+                case 'ArrowUp':
+                    cameraRotation[0] += 1; // rotate up
+                    break;
+                case 'ArrowDown':
+                    cameraRotation[0] -= 1; // rotate down
+                    break;
+                case 'ArrowLeft':
+                    cameraRotation[1] += 1; // rotate left
+                    break;
+                case 'ArrowRight':
+                    cameraRotation[1] -= 1; // rotate right
+                    break;
+            }
+
+            console.log("Camera Distance", calculateCameraDistanceFromOrigin())
+
+            if (calculateCameraDistanceFromOrigin() > 4.5) {
+                subdivisions1 = 1;
+            } else if (calculateCameraDistanceFromOrigin() > 4) {
+                subdivisions1 = 2;
+            } else if (calculateCameraDistanceFromOrigin() > 3.5) {
+                subdivisions1 = 3;
+            } else if (calculateCameraDistanceFromOrigin() > 3) {
+                subdivisions1 = 4;
+            } else if (calculateCameraDistanceFromOrigin() > 2.5) {
+                subdivisions1 = 5;
+            } else if (calculateCameraDistanceFromOrigin() > 2) {
+                subdivisions1 = 6;
+            } else if (calculateCameraDistanceFromOrigin() > 1.5) {
+                subdivisions1 = 7;
+            } else if (calculateCameraDistanceFromOrigin() > 1) {
+                subdivisions1 = 8;
+            } else if (calculateCameraDistanceFromOrigin() > 0.5) {
+                subdivisions1 = 9;
+            } else if (calculateCameraDistanceFromOrigin() > 0.015625) {
+                subdivisions1 = 10;
+            } else if (calculateCameraDistanceFromOrigin() > 0.0078125) {
+                subdivisions1 = 11;
+            } else if (calculateCameraDistanceFromOrigin() > 0.00390625) {
+                subdivisions1 = 12;
+            } else if (calculateCameraDistanceFromOrigin() > 0.001953125) {
+                subdivisions1 = 13;
+            } else if (calculateCameraDistanceFromOrigin() > 0.0009765625) {
+                subdivisions1 = 14;
+            } else if (calculateCameraDistanceFromOrigin() > 0.00048828125) {
+                subdivisions1 = 15;
+            } else if (calculateCameraDistanceFromOrigin() > 0.000244140625) {
+                subdivisions1 = 16;
+            } else if (calculateCameraDistanceFromOrigin() > 0.0001220703125) {
+                subdivisions1 = 17;
+            } else if (calculateCameraDistanceFromOrigin() > 0.00006103515625) {
+                subdivisions1 = 18;
+            } else if (calculateCameraDistanceFromOrigin() > 0.000030517578125) {
+                subdivisions1 = 19;
+            }
+
+
+
+
+
+
+            console.log("cameraPosition", cameraPosition);
+            makeCube(subdivisions1);
+            // console.log("vertexData", vertexData);
+
+            init();
+
+        }
+    </script>
+
+</head>
+<body>
+    <h1>Ashar Rahman LOD Project</h1>
+    <canvas id="webgl-canvas" width="500" height="500"  style="border: black solid 2px">
+        Your browser does not support the HTML5 canvas element.
+    </canvas>
+
+    <h1>
+        Controls
+    </h1>
+    <table>
+        <tr>
+            <td>
+                <h3>Camera</h3>
+                <ul>
+                    <li>W: move positive z axis</li>
+                    <li>S: move negative z axis</li>
+                    <li>A: move left move positive X axis</li>
+                    <li>D: move right move negative X axis</li>
+                    <li>Arrow Up: rotate up</li>
+                    <li>Arrow Down: rotate down</li>
+                    <li>Arrow Left: rotate left</li>
+                    <li>Arrow Right: rotate right</li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+
+
+</body>
+</html>
