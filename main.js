@@ -9,12 +9,11 @@ let subdivisions1 = 1;
 let subdivisions2 = 1;
 
 let image;
+let concreteImage;
 let gl;
 let canvas;
 let brickTexture;
 let thirdTexture;
-
-let textureLoaded = false;
 
 
 
@@ -70,52 +69,52 @@ const cube2Data = [
 
 const cube3Data = [
     // Front
-    -0.5, 0.5, 0.5, // top right
-    -0.5, -.5, 0.5, // bottom right
-    -1.5, 0.5, 0.5, // top left
-    -1.5, 0.5, 0.5, // top left
-    -0.5, -.5, 0.5, // bottom right
-    -1.5, -.5, 0.5, // bottom left
+    -1.5, 0.5, 0.5, // top right
+    -1.5, -.5, 0.5, // bottom right
+    -2.5, 0.5, 0.5, // top left
+    -2.5, 0.5, 0.5, // top left
+    -1.5, -.5, 0.5, // bottom right
+    -2.5, -.5, 0.5, // bottom left
 
     // Left
-    -1.5, 0.5, 0.5,
-    -1.5, -.5, 0.5,
-    -1.5, 0.5, -.5,
-    -1.5, 0.5, -.5,
-    -1.5, -.5, 0.5,
-    -1.5, -.5, -.5,
+    -2.5, 0.5, 0.5,
+    -2.5, -.5, 0.5,
+    -2.5, 0.5, -.5,
+    -2.5, 0.5, -.5,
+    -2.5, -.5, 0.5,
+    -2.5, -.5, -.5,
 
     // Back
+    -2.5, 0.5, -.5,
+    -2.5, -.5, -.5,
     -1.5, 0.5, -.5,
+    -1.5, 0.5, -.5,
+    -2.5, -.5, -.5,
     -1.5, -.5, -.5,
-    -0.5, 0.5, -.5,
-    -0.5, 0.5, -.5,
-    -1.5, -.5, -.5,
-    -0.5, -.5, -.5,
 
     // Right
-    -0.5, 0.5, -.5,
-    -0.5, -.5, -.5,
-    -0.5, 0.5, 0.5,
-    -0.5, 0.5, 0.5,
-    -0.5, -.5, 0.5,
-    -0.5, -.5, -.5,
+    -1.5, 0.5, -.5,
+    -1.5, -.5, -.5,
+    -1.5, 0.5, 0.5,
+    -1.5, 0.5, 0.5,
+    -1.5, -.5, 0.5,
+    -1.5, -.5, -.5,
 
     // Top
-    -0.5, 0.5, 0.5,
-    -0.5, 0.5, -.5,
     -1.5, 0.5, 0.5,
-    -1.5, 0.5, 0.5,
-    -0.5, 0.5, -.5,
     -1.5, 0.5, -.5,
+    -2.5, 0.5, 0.5,
+    -2.5, 0.5, 0.5,
+    -1.5, 0.5, -.5,
+    -2.5, 0.5, -.5,
 
     // Underside
-    -0.5, -.5, 0.5,
-    -0.5, -.5, -.5,
     -1.5, -.5, 0.5,
-    -1.5, -.5, 0.5,
-    -0.5, -.5, -.5,
     -1.5, -.5, -.5,
+    -2.5, -.5, 0.5,
+    -2.5, -.5, 0.5,
+    -1.5, -.5, -.5,
+    -2.5, -.5, -.5,
 ];
 
 
@@ -133,7 +132,7 @@ const uvData = repeat(6, [
 ]);
 
 
-function draw(gl, canvas, brickTexture) {
+function draw(gl, canvas, brickTexture, thirdTexture) {
 
     const mat4 = glMatrix.mat4;
 
@@ -174,6 +173,9 @@ function draw(gl, canvas, brickTexture) {
     gl.bindBuffer(gl.ARRAY_BUFFER, cube2Buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cube2Data), gl.STATIC_DRAW);
 
+    const cube3Buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, cube3Buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cube3Data), gl.STATIC_DRAW);
 
 
 
@@ -326,11 +328,33 @@ function draw(gl, canvas, brickTexture) {
 
     gl.drawArrays(gl.TRIANGLES, 0, cube2Data.length / 3);
 
+    // Draw the third cube
+    gl.useProgram(brickProgram);
+    const thirdPositionLocation = gl.getAttribLocation(brickProgram, 'vertexPosition');
+    gl.enableVertexAttribArray(thirdPositionLocation);
+    gl.bindBuffer(gl.ARRAY_BUFFER, cube3Buffer);
+    gl.vertexAttribPointer(thirdPositionLocation, 3, gl.FLOAT, false, 0, 0);
+
+    const thirdUvLocation = gl.getAttribLocation(brickProgram, 'uv');
+    gl.enableVertexAttribArray(thirdUvLocation);
+    gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
+    gl.vertexAttribPointer(thirdUvLocation, 2, gl.FLOAT, false, 0, 0);
+
+    const thirdTextureLocation = gl.getUniformLocation(brickProgram, 'uTexture');
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, thirdTexture);
+    gl.uniform1i(thirdTextureLocation, 0);
+
+    const thirdMatrixLocation = gl.getUniformLocation(brickProgram, 'matrix');
+    gl.uniformMatrix4fv(thirdMatrixLocation, false, mvpMatrix);
+
+    gl.drawArrays(gl.TRIANGLES, 0, cube3Data.length / 3);
+
     console.log("draw called", gl.getError());
 
 }
 
-function loadTexture(url, gl) {
+function loadTexture(url, gl, image) {
     const texture = gl.createTexture();
 
 
@@ -365,9 +389,11 @@ function init() {
 
 	makeCube(subdivisions1);
 
+    brickTexture = loadTexture('brick.jpg', gl, image);
 
-    brickTexture = loadTexture('brick.jpg', gl);
-	draw(gl, canvas, brickTexture);
+    thirdTexture = loadTexture('concrete.jpg', gl, concreteImage);
+
+    draw(gl, canvas, brickTexture, thirdTexture);
 
 }
 

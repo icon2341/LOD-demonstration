@@ -11,6 +11,9 @@
         // Call init once the webpage has loaded
         image = new Image();
         image.src = 'brick.jpg';
+
+        concreteImage = new Image();
+        concreteImage.src = 'concrete.jpg';
         console.log("image", image);
         window.onload = init;
     </script>
@@ -100,7 +103,7 @@
             makeCube(subdivisions1);
             // console.log("vertexData", vertexData);
 
-            draw(gl, canvas, brickTexture);
+            draw(gl, canvas, brickTexture, thirdTexture);
 
         }
     </script>
